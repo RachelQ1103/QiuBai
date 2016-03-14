@@ -3,6 +3,9 @@
  */
 
 $(document).ready(function() {
+    
+    console.log( "hello world" );
+    
     // header-logo will be changed according to weekdays
     var date = new Date();
     var day=date.getDay();
