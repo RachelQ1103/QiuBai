@@ -6,9 +6,8 @@ $(document).ready(function() {
     // header-logo will be changed according to weekdays
     var date = new Date();
     var day=date.getDay();
-    var hd_logo=$("#hd_logo");
-    var logo_a=hd_logo.getElementsByTagName("a")[0];
-    logo_a.style.background = url('http://'+window.location.host+'/static/logo/week'+day+'.png');
+    var logo_by_day=$("#logo-weekday");
+    logo_by_day.src = url('http://'+window.location.host+'/static/logo/week'+day+'.png');
 
     var setup = function() {
         // click on Login or Signup
