@@ -1,15 +1,16 @@
 {% extends "bootstrap/base.html" %}
 
-{% block title %}Flasky{% endblock %}
+{% block title %}糗事百科 - 超搞笑的原创笑话合辑{% endblock %}
 
 {% block head %}
 {{ super() }}
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}
 
 {% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
+<div class="Qiu-navbar navbar" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -18,11 +19,21 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">Flasky</a>
+            <div class="logo" id="hd_logo">
+                <a href="/"><h1>糗事百科</h1></a>
+            </div>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li><a class="Qiu-navs" href="{{ url_for('main.index') }}">热门</a></li>
+                <li><a class="Qiu-navs" href="#">图片</a></li>
+                <li><a class="Qiu-navs" href="#">文字</a></li>
+                <li><a class="Qiu-navs" href="#">投稿</a></li>
+                <li><a class="Qiu-navs" href="#">小鸡炖蘑菇</a></li>
+                <li><a class="Qiu-navs" href="#">问答</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a class="Qiu-nav-login" data-toggle="modal" data-target="#Qiu-login" href="{{ url_for('auth.login') }}">登录</a></li>
             </ul>
         </div>
     </div>
@@ -38,11 +49,69 @@
     </div>
     {% endfor %}
 
+    <div class="Qiu-login-modal modal fade" id="Qiu-login" role="dialog" aria-labelledby="Qiu-login-Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="Qiu-login-content modal-content">
+                <div class="Qiu-login-header modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="Qiu-login-Label">使用合作账号登录 / 免邀请码注册</h4>
+                </div>
+                <div class="Qiu-login-body modal-body">
+                    <div class="Qiu-social-login">
+                        <a class="Qiu-social-btn Qiu-social-wechat" href="https://open.weixin.qq.com/connect/qrconnect?appid=wx559af2d26b56c655&amp;redirect_uri=http%3A%2F%2Fwww.qiushibaike.com%2Fsession%3Fsrc%3Dwx&amp;response_type=code&amp;scope=snsapi_login#wechat_redirect">
+                            使用 微信 账号
+                        </a>
+                        <a class="Qiu-social-btn Qiu-social-weibo" href="https://api.weibo.com/oauth2/authorize?client_id=63372306&amp;redirect_uri=http%3A%2F%2Fwww.qiushibaike.com%2Fsession">
+                            使用 微博 账号
+                        </a>
+                        <a class="Qiu-social-btn Qiu-social-QQ" href="http://openapi.qzone.qq.com/oauth/show?which=Login&amp;display=pc&amp;client_id=100251437&amp;response_type=code&amp;redirect_uri=www.qiushibaike.com/session?src=qq">
+                            使用 QQ 账号
+                        </a>
+                    </div>
+                    <li role="presentation" class="divider"></li>
+                    <h4 class="Qiu-login-header">使用糗百账号登录</h4>
+                    <form class="Qiu-account-form" id="Qiu-login-form">
+                        <div class="Qiu-form-textinput">
+                            <div class="Qiu-input-wrapper">
+                                <input type="text" placeholder="邮箱" name="email" required/>
+                            </div>
+                            <div class="Qiu-input-wrapper">
+                                <input type="text" placeholder="密码" name="password" required/>
+                            </div>
+                        </div>
+                        <button class="Qiu-button-big btn btn-block" type="submit" data-dismiss="modal">登录</button>
+                        <a href="#" class="float-left">忘记密码?</a>
+                        <a href="#" class="Qiu-login-sign float-right" id="Qiu-signup">注册新账号</a>
+                    </form>
+                    <form class="Qiu-account-form" id="Qiu-signup-form">
+                        <div class="Qiu-form-textinput">
+                            <div class="Qiu-input-wrapper">
+                                <input type="email" placeholder="邮箱" name="email" required/>
+                            </div>
+                            <div class="Qiu-input-wrapper">
+                                <input type="text" placeholder="昵称" name="username" required/>
+                            </div>
+                            <div class="Qiu-input-wrapper">
+                                <input type="text" placeholder="密码" name="password" required/>
+                            </div>
+                        </div>
+                        <button class="Qiu-button-big btn btn-block" type="submit" data-dismiss="modal">注册</button>
+                        <a href="#" class="Qiu-login-sign float-right" id="Qiu-login">登录</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
 
+
 {% block scripts %}
-{{ super() }}
-{{ moment.include_moment() }}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('zh-CN') }}
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 {% endblock %}
+
