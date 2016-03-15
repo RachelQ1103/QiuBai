@@ -3,7 +3,7 @@ from app.auth.forms import LoginForm
 from . import main
 
 
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/')
 def index():
     return render_template('index.html')
 
