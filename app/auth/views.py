@@ -28,9 +28,3 @@ def login():
 def logout():
     flash('您现在已退出.')
     return redirect(url_for('main.index'))
-
-
-@auth.context_processor
-def inject_login_form():
-    form = LoginForm()
-    return dict(login_form=form)
