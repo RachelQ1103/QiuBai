@@ -7,8 +7,3 @@ from . import main
 def index():
     return render_template('index.html')
 
-
-@main.context_processor
-def inject_login_form():
-    form = LoginForm()
-    return dict(login_form=form)
