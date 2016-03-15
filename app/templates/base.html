@@ -37,7 +37,7 @@
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
                 {% else %}
-                <li><a class="Qiu-nav-login" data-toggle="modal" data-target="#Qiu-login" href="{{ url_for('auth.login') }}">登录</a></li>
+                <li><a class="Qiu-nav-login" data-toggle="modal" data-target="#Qiu-login" >登录</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -74,16 +74,17 @@
                         </a>
                     </div>
                     <h4 class="Qiu-login-header">使用糗百账号登录</h4>
-                    <form class="Qiu-account-form" id="Qiu-login-form">
+                    <form class="Qiu-account-form" id="Qiu-login-form" method="post" action="{{ url_for('auth.login') }}">
+                        {{ login_form.hidden_tag() }}
                         <div class="Qiu-form-textinput">
                             <div class="Qiu-input-wrapper">
-                                <input type="text" placeholder="邮箱" name="email" required/>
+                                {{ login_form.email.label }}: {{ login_form.email }}
                             </div>
                             <div class="Qiu-input-wrapper">
-                                <input type="text" placeholder="密码" name="password" required/>
+                                {{ login_form.password.label }}: {{ login_form.password }}
                             </div>
                         </div>
-                        <button class="Qiu-button-big btn btn-block" type="submit">登录</button>
+                        {{ login_form.submit(class="Qiu-button-big btn btn-block") }}
                         <a href="#" class="float-left">忘记密码?</a>
                         <a href="#" class="Qiu-login-sign float-right" id="Qiu-signup">注册新账号</a>
                     </form>
