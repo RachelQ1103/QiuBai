@@ -10,9 +10,9 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    QIUBAI_MAIL_SUBJECT_PREFIX = '[QiuBai]'
-    QIUBAI_MAIL_SENDER = 'QiuBai Admin <chen_ruiqi1006@126.com>'
-    QIUBAI_ADMIN = os.environ.get('QIUBAI_ADMIN')
+    QI_MAIL_SUBJECT_PREFIX = '[QiuBai]'
+    QI_MAIL_SENDER = 'Qi Admin <chen_ruiqi1006@126.com>'
+    QI_ADMIN = os.environ.get('QI_ADMIN')
 
     @staticmethod
     def init_app(app):

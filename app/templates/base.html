@@ -1,4 +1,5 @@
 {% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}糗事百科 - 超搞笑的原创笑话合辑{% endblock %}
 
@@ -14,13 +15,13 @@
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only">下拉导航</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
             <div class="logo">
-                <a href="/"><img id="logo-weekday"></a>
+                <a href="{{ url_for('main.index') }}"><img class="pull-left" id="logo-weekday"></a>
             </div>
         </div>
         <div class="navbar-collapse collapse">
@@ -33,7 +34,11 @@
                 <li><a class="Qiu-navs" href="#">问答</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('auth.logout') }}">退出</a></li>
+                {% else %}
                 <li><a class="Qiu-nav-login" data-toggle="modal" data-target="#Qiu-login" href="{{ url_for('auth.login') }}">登录</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -68,7 +73,6 @@
                             使用 QQ 账号
                         </a>
                     </div>
-                    <li role="presentation" class="divider"></li>
                     <h4 class="Qiu-login-header">使用糗百账号登录</h4>
                     <form class="Qiu-account-form" id="Qiu-login-form">
                         <div class="Qiu-form-textinput">
@@ -79,11 +83,11 @@
                                 <input type="text" placeholder="密码" name="password" required/>
                             </div>
                         </div>
-                        <button class="Qiu-button-big btn btn-block" type="submit" data-dismiss="modal">登录</button>
+                        <button class="Qiu-button-big btn btn-block" type="submit">登录</button>
                         <a href="#" class="float-left">忘记密码?</a>
                         <a href="#" class="Qiu-login-sign float-right" id="Qiu-signup">注册新账号</a>
                     </form>
-                    <form class="Qiu-account-form" id="Qiu-signup-form">
+                    <form class="Qiu-account-form disabled" id="Qiu-signup-form">
                         <div class="Qiu-form-textinput">
                             <div class="Qiu-input-wrapper">
                                 <input type="email" placeholder="邮箱" name="email" required/>
@@ -95,7 +99,7 @@
                                 <input type="text" placeholder="密码" name="password" required/>
                             </div>
                         </div>
-                        <button class="Qiu-button-big btn btn-block" type="submit" data-dismiss="modal">注册</button>
+                        <button class="Qiu-button-big btn btn-block" type="submit">注册</button>
                         <a href="#" class="Qiu-login-sign float-right" id="Qiu-login">登录</a>
                     </form>
                 </div>
