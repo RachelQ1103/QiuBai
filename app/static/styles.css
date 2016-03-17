@@ -10,6 +10,10 @@ body {
 a {
     text-decoration: none;
 }
+a:hover {
+    text-decoration: none;
+    color: black;
+}
 .disabled {
     display: none;
 }
@@ -29,6 +33,9 @@ a {
     font-weight: 400;
     color: #333;
     margin: 0 30px;
+}
+.Qiu-nav-button {
+    color: grey;
 }
 .Qiu-nav-login {
     padding-top: 22px;
@@ -106,6 +113,12 @@ a {
     padding: 11px;
     border: none;
     outline: none;
+}
+.Qiu-remember-me {
+    color: #c5c5c5;
+    font-size: 12px;
+    margin-top: 6px;
+    margin-bottom: 3px;
 }
 .Qiu-button-big {
     width: 100%;

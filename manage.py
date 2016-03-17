@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 from app import create_app, db
-from app.auth.forms import LoginForm
+from app.auth.forms import LoginForm, RegistrationForm
 from app.models import User, Role
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -30,6 +30,12 @@ def inject_login_form():
     """Add LoginFrom to base.html"""
     form = LoginForm()
     return dict(login_form=form)
+
+@app.context_processor
+def inject_registration_form():
+    """Add RegistrationForm to base.html"""
+    form = RegistrationForm()
+    return dict(registration_form=form)
 
 
 if __name__ == '__main__':
