@@ -148,6 +148,7 @@ def change_email_request():
         if current_user.verify_password(form.password.data):
             new_email = form.email.data
             token = current_user.generate_email_change_token(new_email)
+            print(url_for('auth.change_email', token=token, _external=True))
             send_email(new_email, '确认新邮箱地址', 'auth/email/change_email', user=current_user, token=token)
             flash('确认邮件已经发往你的新邮箱,请激活.')
             return redirect(url_for('main.index'))
