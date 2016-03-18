@@ -32,10 +32,41 @@ a:hover {
     font-size: 14px;
     font-weight: 400;
     color: #333;
-    margin: 0 30px;
 }
 .Qiu-nav-button {
     color: grey;
+}
+.Qiu-dropbtn {
+    background-color: #ffd52b;
+    color: #311600;
+    padding: 16px;
+    border: none;
+    cursor: pointer;
+}
+.Qiu-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.Qiu-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffd52b;
+    width: 100%;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.Qiu-dropdown-content a {
+    color: #311600;
+    display: block;
+    padding: 10px;
+}
+.Qiu-dropdown-content a:hover {
+    background: #fde063;
+}
+.Qiu-dropdown:hover .Qiu-dropdown-content {
+    display: block;
+}
+.Qiu-dropdown:hover .Qiu-dropbtn {
+    background: #fde063;
 }
 .Qiu-nav-login {
     padding-top: 22px;
@@ -132,4 +163,11 @@ a:hover {
 }
 .Qiu-account-form a {
     margin-top: 10px;
+}
+.profile-thumbnail {
+    position: absolute;
+}
+.profile-header {
+    min-height: 260px;
+    margin-left: 280px;
 }
