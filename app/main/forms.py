@@ -1,10 +1,13 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField
 from flask_wtf.file import FileField, FileAllowed
+from flask.ext.uploads import UploadSet, IMAGES
 from wtforms.validators import Required, Length, Email, Regexp
 from wtforms import ValidationError
 from flask.ext.pagedown.fields import PageDownField
 from ..models import Role, User
+
+images = UploadSet('images', IMAGES)
 
 class EditProfileForm(Form):
     name = StringField('名字', validators=[Length(0,64)])
@@ -40,7 +43,7 @@ class EditProfileAdminForm(Form):
 
 class PostForm(Form):
     body = PageDownField('分享一件新鲜事...', validators=[Required()])
-    image = FileField('上传图片', validators=[FileAllowed(['jpg','png'], '仅限图片')])
+    photo = FileField('上传图片', validators=[FileAllowed(images, '仅限图片')])
     submit = SubmitField('投递')
 
 class CommentForm(Form):

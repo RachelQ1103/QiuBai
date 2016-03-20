@@ -1,4 +1,5 @@
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -17,6 +18,9 @@ class Config:
     QI_FOLLOWERS_PER_PAGE = 50
     QI_COMMENTS_PER_PAGE = 30
     QI_SLOW_DB_QUERY_TIME = 0.5
+    UPLOAD_FOLDER = '/static/uploads'
+    ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
     @staticmethod
     def init_app(app):

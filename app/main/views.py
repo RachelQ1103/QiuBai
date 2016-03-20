@@ -5,6 +5,10 @@ from ..models import User, Role, Permission, Post, Comment
 from .forms import EditProfileAdminForm, EditProfileForm, PostForm, CommentForm
 from .. import db
 from ..decorator import admin_required, permission_required
+from werkzeug import secure_filename
+from config import config
+import os
+import app
 
 
 @main.route('/')
@@ -75,12 +79,23 @@ def edit_profile_admin(id):
     form.about_me.data = user.about_me
     return render_template('edit_profile.html', form=form, user=user)
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+
 @main.route('/submit-post', methods=['GET', 'POST'])
 def submit_post():
     form = PostForm()
     if current_user.can(Permission.WRITE_ARTICLES) and form.validate_on_submit():
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            photo_url=url_for('static/uploads', filename=filename)
+        else:
+            photo_url = None
         post = Post(body=form.body.data,
-                    image=form.image.data,
+                    photo_url=photo_url,
                     author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.posts', id=post.id))
@@ -100,9 +115,9 @@ def post(id):
     page = request.args.get('page', 1, type=int)
     if page == -1:
         page = (post.comments.count() - 1) // \
-            current_app.config['FLASKY_COMMENTS_PER_PAGE'] + 1
+            current_app.config['QI_COMMENTS_PER_PAGE'] + 1
     pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
-        page, per_page=current_app.config['FLASKY_COMMENTS_PER_PAGE'],
+        page, per_page=current_app.config['QI_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
     return render_template('post.html', posts=[post], form=form,
@@ -125,7 +140,7 @@ def edit(id):
 
 @main.route('/follow/<username>')
 @login_required
-@permission_required
+@permission_required(Permission.FOLLOW)
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
@@ -159,7 +174,7 @@ def followers(username):
     page = request.args.get('page', 1, type=int)
     pagination = user.followers.paginate(
         page, per_page=current_app.config['QI_FOLLOWERS_PER_PAGE'], error_out=False)
-    follows = [{'user': item.follower, 'timestamps': item.timestamps}
+    follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html', user=user, title='的关注者',
                            endpoint='.followers', pagination=pagination, follows=follows)
@@ -172,7 +187,7 @@ def followed(username):
     page = request.args.geet('page', 1, type=int)
     pagination = user.followed.paginate(
         page, per_page=current_app.config['QI_FOLLOWERS_PER_PAGE'], error_out=False)
-    follows = [{'user': item.followed, 'timestamps': item.timestamps}
+    follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html', user=user, title='的关注者',
                            endpoint='.followers', pagination=pagination, follows=follows)

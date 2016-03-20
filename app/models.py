@@ -82,16 +82,25 @@ class User(UserMixin, db.Model):
     avatar_hash = db.Column(db.String(32))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
-                               foreign_key=[Follow.follower_id],
+                               foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),
                                lazy='dynamic',
                                cascade='all, delete-orphan')
-    follower = db.relationship('Follow',
-                               foreign_key=[Follow.followed_id],
-                               backref=db.backref('followed', lazy='join'),
+    followers = db.relationship('Follow',
+                               foreign_keys=[Follow.followed_id],
+                               backref=db.backref('followed', lazy='joined'),
                                lazy='dynamic',
                                cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
+
+    @staticmethod
+    def insert_user_role():
+        for user in User.query.all():
+            if user.role is None:
+                user.role = Role.query.filter_by(default=True).first()
+                db.session.add(user)
+        db.session.commit()
 
 
     @staticmethod
@@ -261,6 +270,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
+    photo_url = db.Column(db.String(32))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
