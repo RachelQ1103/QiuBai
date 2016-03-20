@@ -1,7 +1,9 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField
+from flask_wtf.file import FileField, FileAllowed
 from wtforms.validators import Required, Length, Email, Regexp
 from wtforms import ValidationError
+from flask.ext.pagedown.fields import PageDownField
 from ..models import Role, User
 
 class EditProfileForm(Form):
@@ -36,4 +38,12 @@ class EditProfileAdminForm(Form):
         if field.data != self.user.username and User.query.filter_by(username=field.data).first():
             raise ValidationError('用户名已存在')
 
+class PostForm(Form):
+    body = PageDownField('分享一件新鲜事...', validators=[Required()])
+    image = FileField('上传图片', validators=[FileAllowed(['jpg','png'], '仅限图片')])
+    submit = SubmitField('投递')
+
+class CommentForm(Form):
+    body = PageDownField('添加评论...', validators=[Required()])
+    submit = SubmitField('评论')
 

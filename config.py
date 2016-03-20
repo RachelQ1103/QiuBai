@@ -13,6 +13,10 @@ class Config:
     QI_MAIL_SUBJECT_PREFIX = '[QiuBai]'
     QI_MAIL_SENDER = 'Qi Admin <chen_ruiqi1006@126.com>'
     QI_ADMIN = os.environ.get('QI_ADMIN')
+    QI_POSTS_PER_PAGE = 20
+    QI_FOLLOWERS_PER_PAGE = 50
+    QI_COMMENTS_PER_PAGE = 30
+    QI_SLOW_DB_QUERY_TIME = 0.5
 
     @staticmethod
     def init_app(app):
