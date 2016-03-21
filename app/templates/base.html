@@ -28,7 +28,7 @@
             <ul class="nav navbar-nav">
                 <li><a class="active Qiu-navs" href="{{ url_for('main.index') }}">热门</a></li>
                 <li><a class="Qiu-navs" href="#">图片</a></li>
-                <li><a class="Qiu-navs" href="#">文字</a></li>
+                <li><a class="Qiu-navs" href="{{ url_for('main.index') }}">文字</a></li>
                 <li><a class="Qiu-navs" href="{{ url_for('main.submit_post') }}">投稿</a></li>
                 <li><a class="Qiu-navs" href="#">小鸡炖蘑菇</a></li>
                 <li><a class="Qiu-navs" href="#">问答</a></li>
@@ -127,10 +127,8 @@
             </div>
         </div>
     </div>
+    {% block page_content %}{% endblock %}
 </div>
-
-{% block page_content %}{% endblock %}
-
 {% endblock %}
 
 

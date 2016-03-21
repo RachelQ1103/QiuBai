@@ -28,6 +28,21 @@
                     <span class="label label-danger">编辑[Admin]</span>
                 </a>
                 {% endif %}
+                <p class="label label-warning">好笑: {{ post.likers.count() }}</p>
+                {% if current_user.can(Permission.LIKE) and user != current_user %}
+                    {% if not current_user.is_liking(post) %}
+                        <a href="{{ url_for('.like', id=post.id) }}" class="label label-primary">赞</a>
+                    {% else %}
+                        <a href="{{ url_for('.unlike', id=post.id) }}" class="label label-default">取消赞</a>
+                    {% endif %}
+
+                    {% if not current_user.is_disliking(post) %}
+                        <a href="{{ url_for('.dislike', id=post.id) }}" class="label label-primary">无聊</a>
+                    {% else %}
+                        <a href="{{ url_for('.undislike', id=post.id) }}" class="label label-default">取消无聊</a>
+                    {% endif %}
+                {% endif %}
+
                 <a href="{{ url_for('.post', id=post.id) }}">
                     <span class="label label-default">原文</span>
                 </a>

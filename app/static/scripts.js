@@ -20,7 +20,7 @@ $(document).ready(function() {
          // header-logo will be changed according to weekdays
         var date = new Date();
         var day=date.getDay();
-        $('#logo-weekday').src = '/app/static/logo/week'+day+'.png';
+        $('#logo-weekday').src = {{url_for('static/logo', filename='week'+day+'.png')}};
 
         setup();
     };

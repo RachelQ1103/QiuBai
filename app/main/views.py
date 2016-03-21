@@ -30,7 +30,7 @@ def index():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, per_page=current_app.config['QI_POSTS_PER_PAGE'], error_out=False)
     posts = pagination.items
     return render_template('user.html', user=user, posts=posts, pagination=pagination)
@@ -101,7 +101,7 @@ def submit_post():
         return redirect(url_for('.posts', id=post.id))
     return render_template('submit_post.html', form=form)
 
-@main.route('/post/<int:id>')
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
     form = CommentForm()
@@ -122,6 +122,18 @@ def post(id):
     comments = pagination.items
     return render_template('post.html', posts=[post], form=form,
                            comments=comments, pagination=pagination)
+
+@main.route('/posts/<username>')
+def posts(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('该用户不存在')
+    page = request.args.get('page', 1, type=int)
+    pagination = user.posts.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['QI_POSTS_PER_PAGE'], error_out=False)
+    posts = pagination.items
+    return render_template('posts.html', user=user, posts=posts, pagination=pagination)
+
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -184,12 +196,12 @@ def followed(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
         flash('该用户不存在')
-    page = request.args.geet('page', 1, type=int)
+    page = request.args.get('page', 1, type=int)
     pagination = user.followed.paginate(
         page, per_page=current_app.config['QI_FOLLOWERS_PER_PAGE'], error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
-    return render_template('followers.html', user=user, title='的关注者',
+    return render_template('followers.html', user=user, title='关注的人',
                            endpoint='.followers', pagination=pagination, follows=follows)
 
 @main.route('/all')
@@ -205,6 +217,75 @@ def show_followed():
     resp = make_response(redirect(url_for('.index')))
     resp.set_cookie('show_followed', '1', max_age=30*24*60*60)
     return resp
+
+@main.route('/like/<int:id>')
+@login_required
+@permission_required(Permission.LIKE)
+def like(id):
+    post = Post.query.filter_by(id=id).first()
+    if post is None:
+        flash('糗事不存在')
+        return redirect(request.args.get('next') or url_for('.index'))
+    if current_user.is_liking(post):
+        flash('您已赞过')
+        return redirect(request.args.get('next') or url_for('.index'))
+    current_user.like(post)
+    return redirect(request.args.get('next') or url_for('.index'))
+
+@main.route('/unlike/<int:id>')
+@login_required
+@permission_required(Permission.LIKE)
+def unlike(id):
+    post = Post.query.filter_by(id=id).first()
+    if post is None:
+        flash('糗事不存在')
+        return redirect(request.args.get('next') or url_for('.index'))
+    if not current_user.is_liking(post):
+        flash('您没赞过')
+        return redirect(request.args.get('next') or url_for('.index'))
+    current_user.unlike(post)
+    return redirect(request.args.get('next') or url_for('.index'))
+
+@main.route('/dislike/<int:id>')
+@login_required
+@permission_required(Permission.LIKE)
+def dislike(id):
+    post = Post.query.filter_by(id=id).first()
+    if post is None:
+        flash('糗事不存在')
+        return redirect(request.args.get('next') or url_for('.index'))
+    if current_user.is_disliking(post):
+        flash('您已喷过')
+        return redirect(request.args.get('next') or url_for('.index'))
+    current_user.dislike(post)
+    return redirect(request.args.get('next') or url_for('.index'))
+
+@main.route('/undislike/<int:id>')
+@login_required
+@permission_required(Permission.LIKE)
+def undislike(id):
+    post = Post.query.filter_by(id=id).first()
+    if post is None:
+        flash('糗事不存在')
+        return redirect(request.args.get('next') or url_for('.index'))
+    if not current_user.is_disliking(post):
+        flash('您没喷过')
+        return redirect(request.args.get('next') or url_for('.index'))
+    current_user.undislike(post)
+    return redirect(request.args.get('next') or url_for('.index'))
+
+
+@main.route('/likes/<username>')
+def likes(username):
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('该用户不存在')
+    page = request.args.get('page', 1, type=int)
+    pagination = user.likes.paginate(
+        page, per_page=current_app.config['QI_POSTS_PER_PAGE'], error_out=False)
+    posts = pagination.items
+    return render_template('likes.html', user=user, title='赞过的糗事',
+                           endpoint='.likes', pagination=pagination, posts=posts)
 
 @main.route('/moderate')
 @login_required

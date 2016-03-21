@@ -8,11 +8,11 @@
     <h1>分享糗事</h1>
 </div>
 <div class="col-md-4">
-<form action="{{ url_for('main.submit_post') }}" method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    <div>{{ form.body(placeholder='分享一件新鲜事...') }}</div>
-    <div>{{ form.photo(placeholder='上传图片...') }}</div>
-    {{ form.submit }}
-</form>
+{{ wtf.quick_form(form) }}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
 {% endblock %}

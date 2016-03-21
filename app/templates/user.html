@@ -6,20 +6,27 @@
 {% block page_content %}
 <div class="page-header">
     <h1>{{ user.username }}</h1>
-    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=100) }}">
+    <img class="img-rounded profile-thumbnail" src="{{ user.gravatar(size=256) }}">
     <div class="profile-header">
         {% if user.name or user.location %}
         <p>
-            {% if user.name %}{{ user.name }}<br>{% endif %}
-            {% if user.location %}{{ user.location }}<br>{% endif %}
+            {% if user.name %}<p>昵称: {{ user.name }}</p>{% endif %}
+            {% if user.location %}<p>居住地: {{ user.location }}</p>{% endif %}
         </p>
         {% endif %}
         {% if current_user.is_administrator() %}
-        <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+        <p><a href="mailto:{{ user.email }}">管理员邮箱: {{ user.email }}</a></p>
         {% endif %}
-        {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+        {% if user.about_me %}<p>关于{{ user.username }}: {{ user.about_me }}</p>{% endif %}
         <p>最近登录: {{ moment(user.last_seen).fromNow() }}</p>
-        <p>糗事 {{ user.posts.count() }} | 评论 {{ user.comments.count() }}</p>
+        <a href="{{ url_for('.posts', username=user.username) }}">
+            <p>糗事 {{ user.posts.count() }} | 评论 {{ user.comments.count() }}</p>
+        </a>
+        <p>
+            <a href="{{ url_for('.likes', username=user.username) }}">
+                赞过的糗事: <span class="badge">{{ user.likes.count() }}</span>
+            </a>
+        </p>
         <p>
             {% if current_user.can(Permission.FOLLOW) and user != current_user %}
                 {% if not current_user.is_following(user) %}
@@ -48,7 +55,7 @@
         </p>
     </div>
 </div>
-<h3>{{ user.username }}发表的文章</h3>
+<h3>{{ user.username }}的糗事</h3>
 {% include '_posts.html' %}
 {% if pagination %}
 <div class="pagination">

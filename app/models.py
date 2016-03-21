@@ -65,6 +65,13 @@ class Follow(db.Model):
     followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
+likes = db.Table('likes',
+                 db.Column('liker_id', db.Integer, db.ForeignKey('users.id')),
+                 db.Column('liked_id',db.Integer, db.ForeignKey('posts.id')))
+
+dislikes = db.Table('dislikes',
+                 db.Column('disliker_id', db.Integer, db.ForeignKey('users.id')),
+                 db.Column('disliked_id',db.Integer, db.ForeignKey('posts.id')))
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -92,6 +99,14 @@ class User(UserMixin, db.Model):
                                lazy='dynamic',
                                cascade='all, delete-orphan')
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    likes = db.relationship('Post',
+                            secondary=likes,
+                            backref=db.backref('likers', lazy='dynamic'),
+                            lazy='dynamic')
+    dislikes = db.relationship('Post',
+                            secondary=dislikes,
+                            backref=db.backref('dislikers', lazy='dynamic'),
+                            lazy='dynamic')
 
 
     @staticmethod
@@ -244,6 +259,33 @@ class User(UserMixin, db.Model):
     def is_followed_by(self, user):
         return self.follower.filter_by(follower_id=user.id).first() is not None
 
+    def like(self, post):
+        if not self.is_liking(post):
+            self.likes.append(post)
+            db.session.add(self)
+
+    def unlike(self, post):
+        if self.is_liking(post):
+            self.likes.remove(post)
+            db.session.add(self)
+
+    def is_liking(self, post):
+        return post in self.likes
+
+    def dislike(self, post):
+        if not self.is_disliking(post):
+            self.dislikes.append(post)
+            db.session.add(self)
+
+    def undislike(self, post):
+        if self.is_disliking(post):
+            self.dislikes.remove(post)
+            db.session.add(self)
+
+    def is_disliking(self, post):
+        return post in self.dislikes
+
+
     @property
     def followed_posts(self):
         return Post.query.join(Follow, Follow.followed_id==Post.author_id).filter(Follow.follower_id==self.id)
@@ -275,6 +317,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
+
     @staticmethod
     def generate_fake(count=100):
         from random import seed, randint
@@ -298,6 +341,12 @@ class Post(db.Model):
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html', tags=allowed_tags, strip=True)))
 
+    def is_liked_by(self, user):
+        return self.likers.fitler_by(liker_id=user.id).first() is not None
+
+    def is_disliked_by(self, user):
+        return self.dislikers.fitler_by(disliker_id=user.id).first() is not None
+
 db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 class Comment(db.Model):
@@ -312,7 +361,7 @@ class Comment(db.Model):
 
     @staticmethod
     def on_changed_body(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i','p',
                         'strong']
         target.body_html = bleach.linkify(bleach.clean(
             markdown(value, output_format='html'),
